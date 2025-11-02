@@ -2,37 +2,17 @@
 
 ## Django Shell Commands
 
-To create a new Book instance using the Django shell:
-
 ```python
 # Import the Book model
 from bookshelf.models import Book
 
-# Create a new book using the create() method
-book1 = Book.objects.create(
-    title="The Great Gatsby",
-    author="F. Scott Fitzgerald",
-    publication_year=1925
+# Create a Book instance with title "1984", author "George Orwell", and publication year 1949
+book = Book.objects.create(
+    title="1984",
+    author="George Orwell",
+    publication_year=1949
 )
 
-# Alternative: Create and save manually
-book2 = Book(
-    title="To Kill a Mockingbird",
-    author="Harper Lee",
-    publication_year=1960
-)
-book2.save()
-
-# Verify the book was created
-print(f"Created: {book1}")
-print(f"Created: {book2}")
+# Expected Output: <Book: 1984>
+# The book has been successfully created with the specified attributes.
 ```
-
-## Running the Commands
-
-1. Open Django shell:
-   ```bash
-   python manage.py shell
-   ```
-
-2. Execute the commands above to create Book instances.
