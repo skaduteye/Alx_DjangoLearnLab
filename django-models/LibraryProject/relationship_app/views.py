@@ -26,6 +26,9 @@ def register(request):
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render
 
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render
+
 # Admin view
 @user_passes_test(lambda u: hasattr(u, 'userprofile') and u.userprofile.role == 'Admin')
 def admin_view(request):
