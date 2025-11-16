@@ -1,9 +1,11 @@
+from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect
 from django.views.generic.detail import DetailView
 from .models import Library, Book
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 
+# Existing views
 def list_books(request):
     books = Book.objects.all()
     return render(request, 'relationship_app/list_books.html', {'books': books})
@@ -23,18 +25,7 @@ def register(request):
             return redirect('list_books')
     return render(request, 'relationship_app/register.html', {'form': form})
 
-from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import render
-
-from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import render
-
-from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import render
-
-from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import render
-
+# Role-based views in exact order
 @user_passes_test(lambda u: hasattr(u, 'userprofile') and u.userprofile.role == 'Admin')
 def admin_view(request):
     return render(request, 'relationship_app/admin_view.html')

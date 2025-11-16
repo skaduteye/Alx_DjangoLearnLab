@@ -16,6 +16,8 @@ urlpatterns = [
 
 from . import views  # ensures literal 'views.register' can be used elsewhere
 
+from . import views
+
 urlpatterns += [
     path('admin-view/', views.admin_view, name='admin_view'),
     path('librarian-view/', views.librarian_view, name='librarian_view'),
