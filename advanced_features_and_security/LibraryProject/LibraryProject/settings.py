@@ -1,3 +1,5 @@
+# If behind a proxy/load balancer, ensure Django knows to trust X-Forwarded-Proto for HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
