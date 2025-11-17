@@ -2,8 +2,25 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-advanced-features-key'
-DEBUG = True
-ALLOWED_HOSTS = []
+DEBUG = False  # Always set to False in production for security
+ALLOWED_HOSTS = ['yourdomain.com', 'localhost', '127.0.0.1']  # Update with your actual domain
+SECURE_BROWSER_XSS_FILTER = True  # Enable browser XSS filter
+X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME type sniffing
+CSRF_COOKIE_SECURE = True  # Only send CSRF cookie over HTTPS
+SESSION_COOKIE_SECURE = True  # Only send session cookie over HTTPS
+MIDDLEWARE.insert(0, 'csp.middleware.CSPMiddleware')  # Add CSP middleware (requires django-csp)
+# Content Security Policy settings (requires django-csp)
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'",)
+CSP_IMG_SRC = ("'self'",)
+# Documentation:
+# Security settings above help protect against XSS, CSRF, clickjacking, and other attacks.
+# - DEBUG=False disables detailed error pages in production.
+# - SECURE_BROWSER_XSS_FILTER, X_FRAME_OPTIONS, SECURE_CONTENT_TYPE_NOSNIFF add browser-side protections.
+# - CSRF_COOKIE_SECURE and SESSION_COOKIE_SECURE ensure cookies are sent only over HTTPS.
+# - CSP settings restrict what content can be loaded, reducing XSS risk.
 
 INSTALLED_APPS = [
     'django.contrib.admin',

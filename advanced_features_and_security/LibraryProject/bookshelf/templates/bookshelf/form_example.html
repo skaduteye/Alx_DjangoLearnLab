@@ -1,0 +1,11 @@
+<form method="post">
+    {% csrf_token %}
+    <label for="title">Title:</label>
+    <input type="text" name="title" id="title">
+    <label for="author">Author:</label>
+    <input type="text" name="author" id="author">
+    <label for="published_date">Published Date:</label>
+    <input type="date" name="published_date" id="published_date">
+    <button type="submit">Submit</button>
+</form>
+<!-- Always include {% csrf_token %} in forms for CSRF protection -->
