@@ -554,16 +554,142 @@ REST_FRAMEWORK = {
 - Verify the book ID exists
 - Check the URL pattern is correct
 
+## Testing
+
+### Test Suite Overview
+
+The project includes comprehensive unit tests covering all API endpoints and functionalities. The test suite includes 43 tests organized into the following categories:
+
+#### Test Categories
+
+1. **CRUD Operations Tests**
+   - Book creation with authentication
+   - Book retrieval (list and detail views)
+   - Book updates (full and partial)
+   - Book deletion
+   - Validation testing (e.g., future publication year)
+
+2. **Filtering Tests**
+   - Filter by title
+   - Filter by author name  
+   - Filter by publication year
+   - Multiple filter combinations
+   - No results scenarios
+
+3. **Searching Tests**
+   - Search by title
+   - Search by author name
+   - Case-insensitive searching
+   - Partial text matching
+   - No results scenarios
+
+4. **Ordering Tests**
+   - Order by title (ascending/descending)
+   - Order by publication year (ascending/descending)
+   - Default ordering verification
+
+5. **Combined Query Tests**
+   - Filter + Search
+   - Filter + Ordering
+   - Search + Ordering
+   - Filter + Search + Ordering
+
+6. **Authentication & Permission Tests**
+   - Public access for read operations
+   - Authentication requirements for write operations
+   - Token-based authentication
+   - Unauthorized access attempts
+
+### Running Tests
+
+Execute the full test suite:
+```bash
+cd advanced-api-project
+python manage.py test api
+```
+
+Run specific test classes:
+```bash
+# Test only CRUD operations
+python manage.py test api.test_views.BookCreateViewTests
+
+# Test only filtering
+python manage.py test api.test_views.BookFilteringTests
+
+# Test only search functionality
+python manage.py test api.test_views.BookSearchTests
+
+# Test only ordering
+python manage.py test api.test_views.BookOrderingTests
+
+# Test only permissions
+python manage.py test api.test_views.PermissionTests
+```
+
+Run specific test methods:
+```bash
+python manage.py test api.test_views.BookCreateViewTests.test_create_book_authenticated
+```
+
+### Test Output
+
+Successful test run output:
+```
+Found 43 test(s).
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+...........................................
+----------------------------------------------------------------------
+Ran 43 tests in X.XXXs
+
+OK
+Destroying test database for alias 'default'...
+```
+
+### Test Coverage
+
+The test suite covers:
+- ✅ All 5 API endpoints (List, Detail, Create, Update, Delete)
+- ✅ Authentication and permission enforcement
+- ✅ Data validation (custom and built-in)
+- ✅ Filtering by all configured fields
+- ✅ Search functionality across multiple fields
+- ✅ Ordering in both directions
+- ✅ Combined query operations
+- ✅ Error handling and edge cases
+- ✅ HTTP status codes verification
+- ✅ Response data integrity
+
+### Testing Best Practices
+
+The test suite follows Django testing best practices:
+- Uses separate test database (automatically created and destroyed)
+- Each test is independent and isolated
+- setUp() method creates fresh test data for each test
+- Descriptive test names explaining what is being tested
+- Tests both positive and negative scenarios
+- Comprehensive docstrings for all test classes and methods
+
+### Continuous Integration
+
+To integrate tests into CI/CD pipeline:
+```yaml
+# Example for GitHub Actions
+- name: Run Tests
+  run: |
+    python manage.py test api
+```
+
 ## Future Enhancements
 
 Potential improvements:
-- Add filtering and search capabilities
-- Implement pagination customization
-- Add ordering/sorting options
+- Add pagination customization
 - Create custom permission classes
 - Add throttling for rate limiting
 - Implement versioning
-- Add more complex filtering with django-filter
+- Add more complex filtering options
+- Implement caching strategies
+- Add performance testing
 
 ## License
 

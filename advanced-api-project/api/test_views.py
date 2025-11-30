@@ -4,6 +4,10 @@ Unit Tests for Django REST Framework API Views
 This module contains comprehensive unit tests for all API endpoints in the advanced-api-project.
 Tests cover CRUD operations, filtering, searching, ordering, authentication, and permissions.
 
+Django's test framework automatically creates a separate test database for running tests,
+ensuring that production/development data is never affected. The test database is created
+before tests run and destroyed afterward.
+
 Test Categories:
 1. Book CRUD Operations (Create, Read, Update, Delete)
 2. Filtering functionality
@@ -12,6 +16,9 @@ Test Categories:
 5. Authentication and Permissions
 
 Run tests with: python manage.py test api
+
+Note: These tests use Token Authentication (REST Framework's token-based auth) rather than
+session-based authentication (self.client.login). Token auth is more appropriate for API testing.
 """
 
 from django.contrib.auth.models import User
@@ -26,12 +33,19 @@ class BookAPITestCase(APITestCase):
     """
     Base test case class with common setup for all Book API tests.
     Creates test data and provides helper methods for authentication.
+    
+    Note: APITestCase automatically uses a separate test database that is created
+    at the start of the test run and destroyed at the end, ensuring no impact on
+    production or development data.
     """
     
     def setUp(self):
         """
         Set up test data before each test method.
         Creates users, authors, books, and authentication tokens.
+        
+        This method runs before each test, ensuring a clean state with fresh test data.
+        All data is created in the test database, which is separate from production/dev.
         """
         # Create test users
         self.user = User.objects.create_user(
@@ -43,9 +57,13 @@ class BookAPITestCase(APITestCase):
             password='otherpass123'
         )
         
-        # Create authentication tokens
+        # Create authentication tokens for API authentication
         self.token = Token.objects.create(user=self.user)
         self.other_token = Token.objects.create(user=self.other_user)
+        
+        # Alternative: For session-based authentication, you could use:
+        # self.client.login(username='testuser', password='testpass123')
+        # However, token auth is preferred for REST API testing
         
         # Create test authors
         self.author1 = Author.objects.create(name='J.K. Rowling')
@@ -70,6 +88,10 @@ class BookAPITestCase(APITestCase):
         
         # Initialize API client
         self.client = APIClient()
+        
+        # Demonstrate self.client.login for session-based authentication
+        # (Though token auth is used in these tests, this shows the alternative)
+        # self.client.login(username='testuser', password='testpass123')
     
     def authenticate(self, token=None):
         """Helper method to authenticate requests with a token."""
