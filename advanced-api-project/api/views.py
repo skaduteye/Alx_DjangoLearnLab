@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Book
 from .serializers import BookSerializer
 
@@ -8,7 +10,7 @@ from .serializers import BookSerializer
 
 class BookListView(generics.ListAPIView):
     """
-    API view to retrieve a list of all books.
+    API view to retrieve a list of all books with filtering, searching, and ordering.
     
     - Endpoint: GET /books/
     - Permissions: Read-only access for unauthenticated users
@@ -16,10 +18,35 @@ class BookListView(generics.ListAPIView):
     
     This view uses Django REST Framework's ListAPIView which provides
     a read-only endpoint for listing a collection of model instances.
+    
+    Features:
+    - Filtering: Filter books by title, author__name, and publication_year
+      Example: /api/books/?title=Harry&publication_year=1997
+    
+    - Searching: Search across title and author__name fields
+      Example: /api/books/?search=rowling
+    
+    - Ordering: Sort results by title or publication_year
+      Example: /api/books/?ordering=title or /api/books/?ordering=-publication_year
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.AllowAny]  # Public read access
+    
+    # Enable filtering, searching, and ordering
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    
+    # Specify fields that can be filtered
+    filterset_fields = ['title', 'author__name', 'publication_year']
+    
+    # Specify fields that can be searched
+    search_fields = ['title', 'author__name']
+    
+    # Specify fields that can be used for ordering
+    ordering_fields = ['title', 'publication_year']
+    
+    # Default ordering
+    ordering = ['title']
 
 
 class BookDetailView(generics.RetrieveAPIView):
