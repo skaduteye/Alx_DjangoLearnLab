@@ -10,6 +10,7 @@ This project provides a RESTful API for managing books and authors with the foll
 - Token-based authentication
 - Role-based permissions
 - Custom validation
+- **Advanced filtering, searching, and ordering capabilities**
 
 ## Models
 
@@ -30,11 +31,36 @@ This project provides a RESTful API for managing books and authors with the foll
 #### 1. List All Books
 - **URL**: `/api/books/`
 - **Method**: `GET`
-- **Description**: Retrieve a list of all books
+- **Description**: Retrieve a list of all books with filtering, searching, and ordering support
 - **Response**: 200 OK with array of book objects
-- **Example**:
+- **Query Parameters**:
+  - `title`: Filter by exact title
+  - `author__name`: Filter by author name
+  - `publication_year`: Filter by publication year
+  - `search`: Search in title and author name
+  - `ordering`: Order by field (prefix with `-` for descending)
+- **Examples**:
   ```bash
+  # Get all books
   curl http://127.0.0.1:8000/api/books/
+  
+  # Filter by publication year
+  curl http://127.0.0.1:8000/api/books/?publication_year=1997
+  
+  # Filter by author name
+  curl "http://127.0.0.1:8000/api/books/?author__name=J.K. Rowling"
+  
+  # Search for books
+  curl http://127.0.0.1:8000/api/books/?search=Harry
+  
+  # Order by title (ascending)
+  curl http://127.0.0.1:8000/api/books/?ordering=title
+  
+  # Order by publication year (descending)
+  curl http://127.0.0.1:8000/api/books/?ordering=-publication_year
+  
+  # Combine filters, search, and ordering
+  curl "http://127.0.0.1:8000/api/books/?search=Potter&ordering=publication_year"
   ```
 
 #### 2. Retrieve Single Book
@@ -99,14 +125,146 @@ This project provides a RESTful API for managing books and authors with the foll
     -H "Authorization: Token YOUR_TOKEN"
   ```
 
+## Advanced Query Capabilities
+
+The API supports advanced filtering, searching, and ordering features to help you find and organize book data efficiently.
+
+### Filtering
+
+Filter books by specific field values using query parameters.
+
+**Available Filter Fields:**
+- `title` - Exact match on book title
+- `author__name` - Exact match on author's name
+- `publication_year` - Exact match on publication year
+
+**Examples:**
+```bash
+# Filter by publication year
+GET /api/books/?publication_year=1997
+
+# Filter by author name
+GET /api/books/?author__name=J.K. Rowling
+
+# Filter by title
+GET /api/books/?title=Harry Potter
+
+# Combine multiple filters
+GET /api/books/?author__name=J.K. Rowling&publication_year=1997
+```
+
+### Searching
+
+Perform text-based searches across multiple fields simultaneously.
+
+**Searchable Fields:**
+- `title` - Book title
+- `author__name` - Author's name
+
+**Search Parameter:** `?search=<query>`
+
+**Examples:**
+```bash
+# Search for books containing "Harry" in title or author name
+GET /api/books/?search=Harry
+
+# Search for author names containing "Rowling"
+GET /api/books/?search=Rowling
+
+# Search is case-insensitive and matches partial text
+GET /api/books/?search=potter
+```
+
+### Ordering
+
+Sort results by specified fields in ascending or descending order.
+
+**Orderable Fields:**
+- `title` - Book title
+- `publication_year` - Publication year
+
+**Order Parameter:** `?ordering=<field>` or `?ordering=-<field>` (descending)
+
+**Examples:**
+```bash
+# Order by title (A-Z)
+GET /api/books/?ordering=title
+
+# Order by title (Z-A) - descending
+GET /api/books/?ordering=-title
+
+# Order by publication year (oldest first)
+GET /api/books/?ordering=publication_year
+
+# Order by publication year (newest first)
+GET /api/books/?ordering=-publication_year
+```
+
+### Combining Features
+
+You can combine filtering, searching, and ordering in a single request.
+
+**Examples:**
+```bash
+# Search for "Harry" and order by publication year
+GET /api/books/?search=Harry&ordering=publication_year
+
+# Filter by author and order by title
+GET /api/books/?author__name=J.K. Rowling&ordering=title
+
+# Filter by year, search for text, and order results
+GET /api/books/?publication_year=1997&search=Chamber&ordering=title
+
+# Complex query with all features
+GET /api/books/?author__name=J.K. Rowling&search=Potter&ordering=-publication_year
+```
+
+### Implementation Details
+
+The filtering, searching, and ordering functionality is implemented using:
+
+1. **django-filter** - Provides `DjangoFilterBackend` for field-based filtering
+2. **DRF SearchFilter** - Enables text search across specified fields
+3. **DRF OrderingFilter** - Allows result ordering by specified fields
+
+**Configuration in `views.py`:**
+```python
+class BookListView(generics.ListAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['title', 'author__name', 'publication_year']
+    search_fields = ['title', 'author__name']
+    ordering_fields = ['title', 'publication_year']
+    ordering = ['title']  # Default ordering
+```
+
+**Configuration in `settings.py`:**
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+}
+```
+
 ## View Configurations
 
 ### Generic Views Used
 
 #### BookListView (ListAPIView)
-- **Purpose**: List all books
+- **Purpose**: List all books with filtering, searching, and ordering
 - **Permission**: `AllowAny` - Public access
-- **Features**: Read-only, automatic pagination support
+- **Features**: 
+  - Read-only endpoint
+  - Automatic pagination support
+  - **Filtering** by title, author__name, publication_year
+  - **Searching** across title and author__name fields
+  - **Ordering** by title or publication_year
+  - Default ordering by title (ascending)
+- **Filter Backends**: DjangoFilterBackend, SearchFilter, OrderingFilter
 
 #### BookDetailView (RetrieveAPIView)
 - **Purpose**: Retrieve single book
@@ -256,6 +414,30 @@ curl -X POST http://127.0.0.1:8000/api/books/create/ \
   -d '{"title": "Future Book", "publication_year": 2030, "author": 1}'
 ```
 
+#### Test Filtering, Searching, and Ordering
+```bash
+# Test filtering by publication year
+curl "http://127.0.0.1:8000/api/books/?publication_year=1997"
+
+# Test filtering by author
+curl "http://127.0.0.1:8000/api/books/?author__name=J.K. Rowling"
+
+# Test search functionality
+curl "http://127.0.0.1:8000/api/books/?search=Harry"
+
+# Test ordering (ascending)
+curl "http://127.0.0.1:8000/api/books/?ordering=title"
+
+# Test ordering (descending)
+curl "http://127.0.0.1:8000/api/books/?ordering=-publication_year"
+
+# Test combined filtering and searching
+curl "http://127.0.0.1:8000/api/books/?search=Potter&publication_year=1997"
+
+# Test all features together
+curl "http://127.0.0.1:8000/api/books/?author__name=J.K. Rowling&search=Chamber&ordering=publication_year"
+```
+
 ### Using Postman
 
 1. **Set Base URL**: `http://127.0.0.1:8000`
@@ -307,6 +489,12 @@ advanced-api-project/
 - Public read access for lists and details
 - Authenticated-only access for create, update, delete
 
+✅ **Advanced Query Capabilities**
+- **Filtering** by title, author name, and publication year
+- **Searching** across title and author name fields
+- **Ordering** by title or publication year (ascending/descending)
+- Support for combining multiple query parameters
+
 ✅ **Custom Behavior**
 - `perform_create()` hook in CreateView
 - `perform_update()` hook in UpdateView
@@ -315,7 +503,7 @@ advanced-api-project/
 ✅ **Documentation**
 - Comprehensive docstrings in views
 - Detailed comments in code
-- Complete API documentation in README
+- Complete API documentation in README with examples
 
 ## Configuration Details
 
@@ -325,6 +513,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
     ],
 }
 ```
