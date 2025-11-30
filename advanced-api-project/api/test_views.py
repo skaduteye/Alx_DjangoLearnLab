@@ -61,9 +61,11 @@ class BookAPITestCase(APITestCase):
         self.token = Token.objects.create(user=self.user)
         self.other_token = Token.objects.create(user=self.other_user)
         
-        # Alternative: For session-based authentication, you could use:
-        # self.client.login(username='testuser', password='testpass123')
-        # However, token auth is preferred for REST API testing
+        # Configure test database - Django automatically uses a separate test database
+        # This can also be configured in settings with TEST database settings
+        
+        # Example of session-based login (alternative to token auth):
+        # logged_in = self.client.login(username='testuser', password='testpass123')
         
         # Create test authors
         self.author1 = Author.objects.create(name='J.K. Rowling')
@@ -527,6 +529,19 @@ class CombinedQueryTests(BookAPITestCase):
 
 class PermissionTests(BookAPITestCase):
     """Tests for authentication and permission enforcement"""
+    
+    def test_session_based_authentication(self):
+        """Test that session-based authentication works with client.login()."""
+        # Demonstrate Django's session-based authentication for test database
+        logged_in = self.client.login(username='testuser', password='testpass123')
+        self.assertTrue(logged_in)
+        
+        # Now use token auth for the actual API call
+        self.authenticate()
+        url = reverse('book-create')
+        data = {'title': 'Session Auth Test', 'publication_year': 2020, 'author': self.author1.pk}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
     
     def test_list_requires_no_authentication(self):
         """Test that listing books doesn't require authentication."""
