@@ -1,0 +1,91 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Edit Post - Django Blog
+    {% else %}
+        Create New Post - Django Blog
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="post-form-container">
+    <div class="post-form-wrapper">
+        <h2>
+            {% if form.instance.pk %}
+                <i class="edit-icon">✏️</i> Edit Post
+            {% else %}
+                <i class="create-icon">➕</i> Create New Post
+            {% endif %}
+        </h2>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form method="post" class="post-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                {{ form.title }}
+                {% if form.title.help_text %}
+                    <small class="form-text">{{ form.title.help_text }}</small>
+                {% endif %}
+                {% if form.title.errors %}
+                    <div class="error-message">
+                        {{ form.title.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
+                {{ form.content }}
+                {% if form.content.help_text %}
+                    <small class="form-text">{{ form.content.help_text }}</small>
+                {% endif %}
+                {% if form.content.errors %}
+                    <div class="error-message">
+                        {{ form.content.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    {% if form.instance.pk %}
+                        <i class="save-icon">💾</i> Update Post
+                    {% else %}
+                        <i class="publish-icon">📝</i> Publish Post
+                    {% endif %}
+                </button>
+                <a href="{% if form.instance.pk %}{% url 'post-detail' form.instance.pk %}{% else %}{% url 'post-list' %}{% endif %}" 
+                   class="btn btn-secondary">
+                    <i class="cancel-icon">✖️</i> Cancel
+                </a>
+            </div>
+        </form>
+        
+        <div class="form-tips">
+            <h4>Writing Tips</h4>
+            <ul>
+                <li>Choose a clear and engaging title</li>
+                <li>Break your content into paragraphs for better readability</li>
+                <li>Preview your post after publishing to ensure it looks good</li>
+                <li>You can always edit or delete your post later</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

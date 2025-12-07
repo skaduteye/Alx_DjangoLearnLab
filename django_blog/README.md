@@ -6,15 +6,18 @@ A comprehensive Django blog application with user authentication, post managemen
 
 This Django blog project provides a complete blogging platform with the following features:
 - **User Authentication System**: Registration, login, logout, and profile management
-- User-generated blog posts
-- Post management through Django admin
-- Responsive design with modern CSS
+- **Blog Post Management**: Full CRUD operations for blog posts
+- **Class-Based Views**: Efficient Django CBV implementation
+- **Permission Controls**: Author-only edit/delete functionality
+- **Responsive Design**: Modern CSS with grid layouts
+- **Pagination**: Automatic post pagination
 - SQLite database for development
 - Static files and template management
 - Secure CSRF protection on all forms
 
 ## Documentation
 
+- **[Blog Post Management Documentation](BLOG_POST_MANAGEMENT.md)** - Complete guide to post CRUD operations
 - **[Authentication System Documentation](AUTHENTICATION_DOCUMENTATION.md)** - Comprehensive guide to the user authentication system
 - **Main README** (this file) - Project overview and setup instructions
 
@@ -24,6 +27,7 @@ This Django blog project provides a complete blogging platform with the followin
 django_blog/
 ├── manage.py
 ├── db.sqlite3
+├── BLOG_POST_MANAGEMENT.md   # Blog post CRUD docs
 ├── AUTHENTICATION_DOCUMENTATION.md  # Auth system docs
 ├── django_blog/              # Project configuration
 │   ├── __init__.py
@@ -35,15 +39,25 @@ django_blog/
     ├── __init__.py
     ├── admin.py              # Admin configuration
     ├── apps.py
-    ├── forms.py              # Authentication forms
+    ├── forms.py              # Authentication & post forms
     ├── models.py             # Post model
-    ├── views.py              # View functions (auth + blog)
+    ├── views.py              # CBV and function views
     ├── urls.py               # Blog URL patterns
     ├── tests.py
     ├── migrations/           # Database migrations
     │   └── 0001_initial.py
     ├── templates/            # HTML templates
     │   └── blog/
+            ├── base.html     # Base template
+            ├── home.html     # Home page
+            ├── post_list.html    # All posts list
+            ├── post_detail.html  # Single post view
+            ├── post_form.html    # Create/Edit form
+            ├── post_confirm_delete.html  # Delete confirmation
+            ├── login.html    # Login page
+            ├── register.html # Registration page
+            ├── logout.html   # Logout confirmation
+            └── profile.html  # User profile
     │       ├── base.html     # Base template
     │       ├── home.html     # Home page
     │       ├── login.html    # Login page
@@ -162,22 +176,51 @@ Templates are stored in `blog/templates/blog/` directory. Django automatically d
 
 ## Usage
 
-### Creating Blog Posts
+### Managing Blog Posts (Frontend)
+
+#### Viewing Posts
+- **All Posts**: Visit http://127.0.0.1:8000/posts/
+- **Single Post**: Click on any post title or "Read More" button
+- **Home Page**: Visit http://127.0.0.1:8000/ for the welcome page
+
+#### Creating a Post
+1. Log in to your account
+2. Click "New Post" in the navigation menu
+3. Fill in the post title and content
+4. Click "Publish Post"
+5. Your post will be published immediately
+
+#### Editing a Post
+1. Navigate to your post
+2. Click "Edit Post" button (only visible if you're the author)
+3. Modify title and/or content
+4. Click "Update Post"
+
+#### Deleting a Post
+1. Navigate to your post
+2. Click "Delete Post" button (only visible if you're the author)
+3. Confirm deletion on the confirmation page
+
+### Managing Blog Posts (Admin Panel)
 
 1. Access the admin panel at http://127.0.0.1:8000/admin/
 2. Log in with your superuser credentials
 3. Click on "Posts" under the BLOG section
-4. Click "Add Post" to create a new blog post
-5. Fill in the title, content, and select an author
-6. Click "Save" to publish the post
-
-### Viewing Blog Posts
-
-Visit http://127.0.0.1:8000/ to see all published blog posts on the home page.
+4. Add, edit, or delete posts through the admin interface
 
 ## Features
 
 ### Current Features
+- ✅ **Blog Post Management (CRUD)**:
+  - Create new blog posts (authenticated users)
+  - View all posts in paginated list
+  - View individual post details
+  - Edit your own posts (authors only)
+  - Delete your own posts (authors only)
+  - Automatic author attribution
+  - Pagination (10 posts per page)
+  - Responsive grid layout
+
 - ✅ **User Authentication System**:
   - User registration with email
   - Login/logout functionality
@@ -185,23 +228,27 @@ Visit http://127.0.0.1:8000/ to see all published blog posts on the home page.
   - Secure password hashing
   - CSRF protection
   - Session management
-- ✅ Post model with title, content, publication date, and author
-- ✅ Admin interface for managing posts
-- ✅ Responsive home page displaying all posts
-- ✅ Clean, modern design with CSS styling
-- ✅ Message framework integration
-- ✅ Static file management
-- ✅ Protected routes with login required
+
+- ✅ **Technical Features**:
+  - Class-based views (ListView, DetailView, CreateView, UpdateView, DeleteView)
+  - Permission controls (LoginRequiredMixin, UserPassesTestMixin)
+  - Post model with title, content, publication date, and author
+  - Admin interface for managing posts
+  - Responsive design with modern CSS
+  - Message framework integration
+  - Static file management
+  - Protected routes with login required
 
 ### Planned Features
-- Post detail pages
-- Post creation, editing, and deletion from the frontend
 - Comments system
 - Post categories and tags
 - Search functionality
-- Pagination
+- Rich text editor for posts
 - Email verification
 - Password reset functionality
+- Featured images for posts
+- Post analytics (views, likes)
+- Social sharing
 
 ## Development
 

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Post
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -44,3 +45,45 @@ class UserUpdateForm(forms.ModelForm):
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
         }
+
+
+class PostForm(forms.ModelForm):
+    """Form for creating and updating blog posts."""
+    
+    class Meta:
+        model = Post
+        fields = ['title', 'content']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter post title',
+                'maxlength': '200'
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Write your post content here...',
+                'rows': 10
+            }),
+        }
+        labels = {
+            'title': 'Post Title',
+            'content': 'Post Content',
+        }
+        help_texts = {
+            'title': 'Give your post a catchy title (max 200 characters)',
+            'content': 'Write the main content of your blog post',
+        }
+    
+    def clean_title(self):
+        """Validate that the title is not empty or just whitespace."""
+        title = self.cleaned_data.get('title')
+        if not title or not title.strip():
+            raise forms.ValidationError('Title cannot be empty.')
+        return title.strip()
+    
+    def clean_content(self):
+        """Validate that the content is not empty or just whitespace."""
+        content = self.cleaned_data.get('content')
+        if not content or not content.strip():
+            raise forms.ValidationError('Content cannot be empty.')
+        return content.strip()
