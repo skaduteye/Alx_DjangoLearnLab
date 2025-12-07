@@ -1,0 +1,36 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Logged Out - Django Blog{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-form-wrapper">
+        <h2>You've Been Logged Out</h2>
+        
+        <div class="logout-message">
+            <p>You have successfully logged out of your account.</p>
+            <p>Thank you for visiting Django Blog!</p>
+        </div>
+
+        <div class="auth-links" style="border-top: none; padding-top: 1rem;">
+            <a href="{% url 'login' %}" class="btn btn-primary">Login Again</a>
+            <p style="margin-top: 1rem;">
+                <a href="{% url 'blog-home' %}">Return to Home Page</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+.logout-message {
+    text-align: center;
+    padding: 2rem 0;
+    color: #555;
+}
+
+.logout-message p {
+    margin: 1rem 0;
+    font-size: 1.1rem;
+}
+</style>
+{% endblock %}

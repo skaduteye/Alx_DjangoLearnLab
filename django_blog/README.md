@@ -5,11 +5,18 @@ A comprehensive Django blog application with user authentication, post managemen
 ## Project Overview
 
 This Django blog project provides a complete blogging platform with the following features:
+- **User Authentication System**: Registration, login, logout, and profile management
 - User-generated blog posts
 - Post management through Django admin
 - Responsive design with modern CSS
 - SQLite database for development
 - Static files and template management
+- Secure CSRF protection on all forms
+
+## Documentation
+
+- **[Authentication System Documentation](AUTHENTICATION_DOCUMENTATION.md)** - Comprehensive guide to the user authentication system
+- **Main README** (this file) - Project overview and setup instructions
 
 ## Project Structure
 
@@ -17,6 +24,7 @@ This Django blog project provides a complete blogging platform with the followin
 django_blog/
 ├── manage.py
 ├── db.sqlite3
+├── AUTHENTICATION_DOCUMENTATION.md  # Auth system docs
 ├── django_blog/              # Project configuration
 │   ├── __init__.py
 │   ├── settings.py           # Project settings
@@ -27,8 +35,9 @@ django_blog/
     ├── __init__.py
     ├── admin.py              # Admin configuration
     ├── apps.py
+    ├── forms.py              # Authentication forms
     ├── models.py             # Post model
-    ├── views.py              # View functions
+    ├── views.py              # View functions (auth + blog)
     ├── urls.py               # Blog URL patterns
     ├── tests.py
     ├── migrations/           # Database migrations
@@ -36,11 +45,15 @@ django_blog/
     ├── templates/            # HTML templates
     │   └── blog/
     │       ├── base.html     # Base template
-    │       └── home.html     # Home page template
+    │       ├── home.html     # Home page
+    │       ├── login.html    # Login page
+    │       ├── register.html # Registration page
+    │       ├── logout.html   # Logout confirmation
+    │       └── profile.html  # User profile
     └── static/               # Static files
         └── blog/
             ├── css/
-            │   └── style.css # Stylesheet
+            │   └── style.css # Stylesheet (with auth styles)
             └── js/
                 └── main.js   # JavaScript
 ```
@@ -92,6 +105,28 @@ The `Post` model represents a blog post with the following fields:
 6. **Access the application**:
    - Main site: http://127.0.0.1:8000/
    - Admin panel: http://127.0.0.1:8000/admin/
+   - Login: http://127.0.0.1:8000/login/
+   - Register: http://127.0.0.1:8000/register/
+   - Profile: http://127.0.0.1:8000/profile/ (requires login)
+
+## Quick Start Guide
+
+### Register a New Account
+1. Go to http://127.0.0.1:8000/register/
+2. Fill in username, email, and password
+3. Click "Register"
+4. You'll be automatically logged in
+
+### Login to Existing Account
+1. Go to http://127.0.0.1:8000/login/
+2. Enter your username and password
+3. Click "Login"
+
+### Manage Your Profile
+1. After logging in, click "Profile" in the navigation
+2. View your account information
+3. Edit your username or email
+4. Click "Update Profile" to save changes
 
 ## Configuration
 
@@ -103,6 +138,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     }
 }
 ```
@@ -139,22 +178,30 @@ Visit http://127.0.0.1:8000/ to see all published blog posts on the home page.
 ## Features
 
 ### Current Features
-- Post model with title, content, publication date, and author
-- Admin interface for managing posts
-- Responsive home page displaying all posts
-- Clean, modern design with CSS styling
-- Message framework integration
-- Static file management
+- ✅ **User Authentication System**:
+  - User registration with email
+  - Login/logout functionality
+  - Profile management (view and edit)
+  - Secure password hashing
+  - CSRF protection
+  - Session management
+- ✅ Post model with title, content, publication date, and author
+- ✅ Admin interface for managing posts
+- ✅ Responsive home page displaying all posts
+- ✅ Clean, modern design with CSS styling
+- ✅ Message framework integration
+- ✅ Static file management
+- ✅ Protected routes with login required
 
 ### Planned Features
-- User authentication (login, logout, registration)
 - Post detail pages
 - Post creation, editing, and deletion from the frontend
-- User profiles
 - Comments system
 - Post categories and tags
 - Search functionality
 - Pagination
+- Email verification
+- Password reset functionality
 
 ## Development
 
