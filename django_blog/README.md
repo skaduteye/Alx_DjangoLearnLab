@@ -7,6 +7,7 @@ A comprehensive Django blog application with user authentication, post managemen
 This Django blog project provides a complete blogging platform with the following features:
 - **User Authentication System**: Registration, login, logout, and profile management
 - **Blog Post Management**: Full CRUD operations for blog posts
+- **Comment System**: Interactive commenting on blog posts
 - **Class-Based Views**: Efficient Django CBV implementation
 - **Permission Controls**: Author-only edit/delete functionality
 - **Responsive Design**: Modern CSS with grid layouts
@@ -17,6 +18,7 @@ This Django blog project provides a complete blogging platform with the followin
 
 ## Documentation
 
+- **[Comment Functionality Documentation](COMMENT_FUNCTIONALITY.md)** - Complete guide to the comment system
 - **[Blog Post Management Documentation](BLOG_POST_MANAGEMENT.md)** - Complete guide to post CRUD operations
 - **[Authentication System Documentation](AUTHENTICATION_DOCUMENTATION.md)** - Comprehensive guide to the user authentication system
 - **Main README** (this file) - Project overview and setup instructions
@@ -27,6 +29,7 @@ This Django blog project provides a complete blogging platform with the followin
 django_blog/
 ├── manage.py
 ├── db.sqlite3
+├── COMMENT_FUNCTIONALITY.md  # Comment system docs
 ├── BLOG_POST_MANAGEMENT.md   # Blog post CRUD docs
 ├── AUTHENTICATION_DOCUMENTATION.md  # Auth system docs
 ├── django_blog/              # Project configuration
@@ -39,35 +42,32 @@ django_blog/
     ├── __init__.py
     ├── admin.py              # Admin configuration
     ├── apps.py
-    ├── forms.py              # Authentication & post forms
-    ├── models.py             # Post model
+    ├── forms.py              # Authentication, post & comment forms
+    ├── models.py             # Post & Comment models
     ├── views.py              # CBV and function views
     ├── urls.py               # Blog URL patterns
     ├── tests.py
     ├── migrations/           # Database migrations
-    │   └── 0001_initial.py
+    │   ├── 0001_initial.py
+    │   └── 0002_comment.py
     ├── templates/            # HTML templates
     │   └── blog/
             ├── base.html     # Base template
             ├── home.html     # Home page
             ├── post_list.html    # All posts list
-            ├── post_detail.html  # Single post view
-            ├── post_form.html    # Create/Edit form
-            ├── post_confirm_delete.html  # Delete confirmation
+            ├── post_detail.html  # Single post view (with comments)
+            ├── post_form.html    # Create/Edit post form
+            ├── post_confirm_delete.html  # Delete post confirmation
+            ├── comment_form.html # Create/Edit comment form
+            ├── comment_confirm_delete.html  # Delete comment confirmation
             ├── login.html    # Login page
             ├── register.html # Registration page
             ├── logout.html   # Logout confirmation
             └── profile.html  # User profile
-    │       ├── base.html     # Base template
-    │       ├── home.html     # Home page
-    │       ├── login.html    # Login page
-    │       ├── register.html # Registration page
-    │       ├── logout.html   # Logout confirmation
-    │       └── profile.html  # User profile
     └── static/               # Static files
         └── blog/
             ├── css/
-            │   └── style.css # Stylesheet (with auth styles)
+            │   └── style.css # Stylesheet (with comment styles)
             └── js/
                 └── main.js   # JavaScript
 ```
@@ -81,6 +81,15 @@ The `Post` model represents a blog post with the following fields:
 - `content`: TextField - The main content of the post
 - `published_date`: DateTimeField(auto_now_add=True) - Auto-set on creation
 - `author`: ForeignKey(User) - Links to Django's User model
+
+### Comment Model
+The `Comment` model represents comments on blog posts with the following fields:
+
+- `post`: ForeignKey(Post) - Links to the Post being commented on
+- `author`: ForeignKey(User) - The user who wrote the comment
+- `content`: TextField - The comment text
+- `created_at`: DateTimeField(auto_now_add=True) - Auto-set on creation
+- `updated_at`: DateTimeField(auto_now=True) - Auto-updated on modification
 
 ## Setup Instructions
 
@@ -201,12 +210,49 @@ Templates are stored in `blog/templates/blog/` directory. Django automatically d
 2. Click "Delete Post" button (only visible if you're the author)
 3. Confirm deletion on the confirmation page
 
+### Managing Comments (Frontend)
+
+#### Viewing Comments
+- Comments are displayed below each blog post
+- All users can view comments without logging in
+- Comment count is shown in the post detail sidebar
+
+#### Adding a Comment
+1. **Must be logged in** (login prompt shown if not authenticated)
+2. Navigate to any blog post detail page
+3. Scroll to the "Comments" section
+4. Type your comment in the textarea (minimum 3 characters)
+5. Click "Post Comment"
+6. Your comment appears immediately with your username and timestamp
+
+#### Editing Your Comment
+1. Find your comment in the comments list
+2. Click the "Edit" button (only visible on your own comments)
+3. Modify the comment text
+4. Click "Update Comment"
+5. Comment shows an "(edited)" badge with the updated content
+
+#### Deleting Your Comment
+1. Find your comment in the comments list
+2. Click the "Delete" button (only visible on your own comments)
+3. Review the comment preview on the confirmation page
+4. Click "Yes, Delete Comment" to permanently remove it
+5. You'll be redirected back to the post
+
 ### Managing Blog Posts (Admin Panel)
 
 1. Access the admin panel at http://127.0.0.1:8000/admin/
 2. Log in with your superuser credentials
 3. Click on "Posts" under the BLOG section
 4. Add, edit, or delete posts through the admin interface
+
+### Managing Comments (Admin Panel)
+
+1. Access the admin panel at http://127.0.0.1:8000/admin/
+2. Log in with your superuser credentials
+3. Click on "Comments" under the BLOG section
+4. View, edit, or delete comments
+5. Filter by date, author, or search by content
 
 ## Features
 
@@ -221,6 +267,17 @@ Templates are stored in `blog/templates/blog/` directory. Django automatically d
   - Pagination (10 posts per page)
   - Responsive grid layout
 
+- ✅ **Comment System**:
+  - View comments on all posts
+  - Add comments (authenticated users)
+  - Edit your own comments (authors only)
+  - Delete your own comments (authors only)
+  - Inline comment form on post detail page
+  - Comment metadata (author, timestamp, edited badge)
+  - Comment count display
+  - Minimum 3 character validation
+  - Permission controls for comment management
+
 - ✅ **User Authentication System**:
   - User registration with email
   - Login/logout functionality
@@ -233,22 +290,25 @@ Templates are stored in `blog/templates/blog/` directory. Django automatically d
   - Class-based views (ListView, DetailView, CreateView, UpdateView, DeleteView)
   - Permission controls (LoginRequiredMixin, UserPassesTestMixin)
   - Post model with title, content, publication date, and author
-  - Admin interface for managing posts
+  - Comment model with content, timestamps, and relationships
+  - Admin interface for managing posts and comments
   - Responsive design with modern CSS
   - Message framework integration
   - Static file management
   - Protected routes with login required
 
 ### Planned Features
-- Comments system
+- Nested comment replies (threading)
 - Post categories and tags
 - Search functionality
-- Rich text editor for posts
+- Rich text editor for posts and comments
 - Email verification
 - Password reset functionality
 - Featured images for posts
 - Post analytics (views, likes)
 - Social sharing
+- Comment pagination
+- Comment likes/voting
 
 ## Development
 

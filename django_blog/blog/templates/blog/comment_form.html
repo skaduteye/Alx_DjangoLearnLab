@@ -1,0 +1,71 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    {% if comment %}Edit Comment{% else %}Add Comment{% endif %} - Django Blog
+{% endblock %}
+
+{% block content %}
+<div class="comment-form-wrapper">
+    <div class="comment-form-container">
+        <header class="form-header">
+            <h1>
+                {% if comment %}
+                    <i class="edit-icon">✏️</i> Edit Your Comment
+                {% else %}
+                    <i class="comment-icon">💬</i> Add a Comment
+                {% endif %}
+            </h1>
+            <p class="form-subtitle">
+                {% if comment %}
+                    Update your thoughts on this post
+                {% else %}
+                    Share your thoughts on this post
+                {% endif %}
+            </p>
+        </header>
+        
+        <form method="post" class="comment-form">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            
+            <div class="form-group">
+                {{ form.content.label_tag }}
+                {{ form.content }}
+                {% if form.content.errors %}
+                    <div class="error-message">
+                        {{ form.content.errors }}
+                    </div>
+                {% endif %}
+                {% if form.content.help_text %}
+                    <small class="form-text text-muted">{{ form.content.help_text }}</small>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="save-icon">💾</i> 
+                    {% if comment %}Update Comment{% else %}Post Comment{% endif %}
+                </button>
+                <a href="{% if comment %}{% url 'post-detail' comment.post.pk %}{% else %}{{ request.META.HTTP_REFERER }}{% endif %}" class="btn btn-secondary">
+                    <i class="cancel-icon">❌</i> Cancel
+                </a>
+            </div>
+        </form>
+        
+        <div class="comment-tips">
+            <h3>💡 Comment Guidelines</h3>
+            <ul>
+                <li>Be respectful and constructive</li>
+                <li>Stay on topic with the post</li>
+                <li>Minimum 3 characters required</li>
+                <li>You can edit or delete your comment later</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

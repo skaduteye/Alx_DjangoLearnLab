@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Post
+from .models import Post, Comment
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -86,4 +86,34 @@ class PostForm(forms.ModelForm):
         content = self.cleaned_data.get('content')
         if not content or not content.strip():
             raise forms.ValidationError('Content cannot be empty.')
+        return content.strip()
+
+
+class CommentForm(forms.ModelForm):
+    """Form for creating and updating comments on blog posts."""
+    
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Share your thoughts...',
+                'rows': 4
+            }),
+        }
+        labels = {
+            'content': 'Your Comment',
+        }
+        help_texts = {
+            'content': 'Be respectful and constructive in your comments',
+        }
+    
+    def clean_content(self):
+        """Validate that the comment content is not empty or just whitespace."""
+        content = self.cleaned_data.get('content')
+        if not content or not content.strip():
+            raise forms.ValidationError('Comment cannot be empty.')
+        if len(content.strip()) < 3:
+            raise forms.ValidationError('Comment must be at least 3 characters long.')
         return content.strip()
