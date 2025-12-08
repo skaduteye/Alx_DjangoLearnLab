@@ -226,7 +226,7 @@ def search_posts(request):
     return render(request, 'blog/search_results.html', context)
 
 
-class TaggedPostListView(ListView):
+class PostByTagListView(ListView):
     """Display all posts with a specific tag."""
     model = Post
     template_name = 'blog/tagged_posts.html'
@@ -234,12 +234,12 @@ class TaggedPostListView(ListView):
     paginate_by = 10
     
     def get_queryset(self):
-        """Filter posts by the tag name from the URL."""
-        tag_name = self.kwargs.get('tag_name')
-        return Post.objects.filter(tags__name__in=[tag_name])
+        """Filter posts by the tag slug from the URL."""
+        tag_slug = self.kwargs.get('tag_slug')
+        return Post.objects.filter(tags__slug=tag_slug)
     
     def get_context_data(self, **kwargs):
         """Add the tag name to the context."""
         context = super().get_context_data(**kwargs)
-        context['tag_name'] = self.kwargs.get('tag_name')
+        context['tag_slug'] = self.kwargs.get('tag_slug')
         return context

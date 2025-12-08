@@ -20,7 +20,7 @@ urlpatterns = [
     
     # Search and Tag filtering
     path('search/', views.search_posts, name='search-posts'),
-    path('tags/<slug:tag_name>/', views.TaggedPostListView.as_view(), name='tagged-posts'),
+    path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view(), name='tagged-posts'),
     
     # Authentication URLs
     path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name='login'),
