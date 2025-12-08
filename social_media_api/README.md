@@ -63,6 +63,19 @@ This project provides the foundational backend for a social media platform, incl
 | `/api/accounts/profile/` | PUT/PATCH | Update user profile | Token required |
 | `/api/accounts/users/` | GET | List all users | Token required |
 
+### Follow Management Endpoints
+
+| Endpoint | Method | Description | Authentication |
+|----------|--------|-------------|----------------|
+| `/api/accounts/follow/<user_id>/` | POST | Follow a user | Token required |
+| `/api/accounts/unfollow/<user_id>/` | POST | Unfollow a user | Token required |
+
+### Feed Endpoint
+
+| Endpoint | Method | Description | Authentication |
+|----------|--------|-------------|----------------|
+| `/api/feed/` | GET | Get posts from followed users | Token required |
+
 ### Posts Endpoints
 
 | Endpoint | Method | Description | Authentication |
@@ -168,6 +181,93 @@ Authorization: Token your-auth-token-here
     "followers_count": 5,
     "following_count": 10,
     "date_joined": "2025-12-08T12:00:00Z"
+}
+```
+
+### Follow Management
+
+#### Follow a User
+
+**Endpoint:** `POST /api/accounts/follow/<user_id>/`
+
+**Headers:**
+```
+Authorization: Token your-auth-token-here
+```
+
+**Response (200 OK):**
+```json
+{
+    "message": "You are now following janedoe.",
+    "following": "janedoe"
+}
+```
+
+**Error Response (400 Bad Request):**
+```json
+{
+    "error": "You cannot follow yourself."
+}
+```
+
+#### Unfollow a User
+
+**Endpoint:** `POST /api/accounts/unfollow/<user_id>/`
+
+**Headers:**
+```
+Authorization: Token your-auth-token-here
+```
+
+**Response (200 OK):**
+```json
+{
+    "message": "You have unfollowed janedoe.",
+    "unfollowed": "janedoe"
+}
+```
+
+### Feed
+
+#### Get Your Feed
+
+**Endpoint:** `GET /api/feed/`
+
+**Headers:**
+```
+Authorization: Token your-auth-token-here
+```
+
+**Description:** Returns posts from users you follow, ordered by most recent first.
+
+**Response (200 OK):**
+```json
+{
+    "count": 15,
+    "next": "http://localhost:8000/api/feed/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 5,
+            "author": "janedoe",
+            "author_id": 2,
+            "title": "Latest Post from Jane",
+            "content": "This is my latest update!",
+            "created_at": "2025-12-08T14:00:00Z",
+            "updated_at": "2025-12-08T14:00:00Z",
+            "comments_count": 3
+        },
+        {
+            "id": 3,
+            "author": "bobsmith",
+            "author_id": 3,
+            "title": "Bob's Post",
+            "content": "Hello everyone!",
+            "created_at": "2025-12-08T12:00:00Z",
+            "updated_at": "2025-12-08T12:00:00Z",
+            "comments_count": 1
+        }
+    ]
 }
 ```
 

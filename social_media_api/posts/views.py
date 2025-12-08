@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions, filters, generics
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Post, Comment
@@ -69,3 +69,26 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Set the author to the current user when creating a comment."""
         serializer.save(author=self.request.user)
+
+
+class FeedView(generics.ListAPIView):
+    """
+    API view for retrieving the user's feed.
+    Returns posts from users that the current user follows,
+    ordered by creation date (most recent first).
+    """
+    serializer_class = PostListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['created_at', 'updated_at']
+    ordering = ['-created_at']
+
+    def get_queryset(self):
+        """
+        Return posts from users that the current user follows.
+        """
+        # Get the users that the current user is following
+        following_users = self.request.user.following.all()
+        
+        # Return posts from those users, ordered by most recent
+        return Post.objects.filter(author__in=following_users).order_by('-created_at')

@@ -13,4 +13,8 @@ urlpatterns = [
     
     # List all users
     path('users/', views.UserListView.as_view(), name='user-list'),
+    
+    # Follow/Unfollow users
+    path('follow/<int:user_id>/', views.FollowUserView.as_view(), name='follow-user'),
+    path('unfollow/<int:user_id>/', views.UnfollowUserView.as_view(), name='unfollow-user'),
 ]
