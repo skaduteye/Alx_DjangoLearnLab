@@ -3,9 +3,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
 
+from .models import CustomUser
 from .serializers import (
     UserSerializer,
     UserRegistrationSerializer,
@@ -13,15 +14,13 @@ from .serializers import (
     UserProfileSerializer,
 )
 
-User = get_user_model()
-
 
 class UserRegistrationView(generics.CreateAPIView):
     """
     API view for user registration.
     Creates a new user and returns an authentication token.
     """
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -101,7 +100,7 @@ class UserListView(generics.ListAPIView):
     API view for listing all users.
     Requires authentication.
     """
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -112,11 +111,11 @@ class FollowUserView(generics.GenericAPIView):
     POST to follow the specified user.
     """
     permission_classes = [permissions.IsAuthenticated]
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
 
     def post(self, request, user_id):
         """Follow the user with the given user_id."""
-        user_to_follow = get_object_or_404(User, id=user_id)
+        user_to_follow = get_object_or_404(CustomUser, id=user_id)
         
         # Cannot follow yourself
         if user_to_follow == request.user:
@@ -145,11 +144,11 @@ class UnfollowUserView(generics.GenericAPIView):
     POST to unfollow the specified user.
     """
     permission_classes = [permissions.IsAuthenticated]
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
 
     def post(self, request, user_id):
         """Unfollow the user with the given user_id."""
-        user_to_unfollow = get_object_or_404(User, id=user_id)
+        user_to_unfollow = get_object_or_404(CustomUser, id=user_id)
         
         # Cannot unfollow yourself
         if user_to_unfollow == request.user:
