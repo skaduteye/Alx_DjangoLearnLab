@@ -2,7 +2,6 @@ from rest_framework import viewsets, permissions, filters, generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
-from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, PostListSerializer, CommentSerializer
@@ -107,10 +106,10 @@ class LikePostView(APIView):
 
     def post(self, request, pk):
         """Like the post with the given pk."""
-        post = get_object_or_404(Post, pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
         
         # Check if already liked
-        like, created = Like.objects.get_or_create(post=post, user=request.user)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
         
         if not created:
             return Response({
@@ -143,7 +142,7 @@ class UnlikePostView(APIView):
 
     def post(self, request, pk):
         """Unlike the post with the given pk."""
-        post = get_object_or_404(Post, pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
         
         # Try to get the like
         try:
