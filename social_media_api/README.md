@@ -1,6 +1,6 @@
 # Social Media API
 
-A Django REST Framework-based API for a social media application with user authentication, profiles, and follower functionality.
+A Django REST Framework-based API for a social media application with user authentication, profiles, posts, comments, and follower functionality.
 
 ## Project Overview
 
@@ -9,6 +9,9 @@ This project provides the foundational backend for a social media platform, incl
 - Token-based authentication
 - User registration and login endpoints
 - Profile management
+- Posts with full CRUD operations
+- Comments on posts
+- Pagination and filtering
 
 ## Setup Instructions
 
@@ -35,7 +38,7 @@ This project provides the foundational backend for a social media platform, incl
 
 3. **Install dependencies:**
    ```bash
-   pip install django djangorestframework
+   pip install django djangorestframework django-filter
    ```
 
 4. **Run migrations:**
@@ -59,6 +62,28 @@ This project provides the foundational backend for a social media platform, incl
 | `/api/accounts/profile/` | GET | Get current user profile | Token required |
 | `/api/accounts/profile/` | PUT/PATCH | Update user profile | Token required |
 | `/api/accounts/users/` | GET | List all users | Token required |
+
+### Posts Endpoints
+
+| Endpoint | Method | Description | Authentication |
+|----------|--------|-------------|----------------|
+| `/api/posts/` | GET | List all posts (paginated) | Token required |
+| `/api/posts/` | POST | Create a new post | Token required |
+| `/api/posts/{id}/` | GET | Get a specific post | Token required |
+| `/api/posts/{id}/` | PUT | Update a post (owner only) | Token required |
+| `/api/posts/{id}/` | PATCH | Partial update a post | Token required |
+| `/api/posts/{id}/` | DELETE | Delete a post (owner only) | Token required |
+
+### Comments Endpoints
+
+| Endpoint | Method | Description | Authentication |
+|----------|--------|-------------|----------------|
+| `/api/comments/` | GET | List all comments (paginated) | Token required |
+| `/api/comments/` | POST | Create a new comment | Token required |
+| `/api/comments/{id}/` | GET | Get a specific comment | Token required |
+| `/api/comments/{id}/` | PUT | Update a comment (owner only) | Token required |
+| `/api/comments/{id}/` | PATCH | Partial update a comment | Token required |
+| `/api/comments/{id}/` | DELETE | Delete a comment (owner only) | Token required |
 
 ### User Registration
 
@@ -146,6 +171,90 @@ Authorization: Token your-auth-token-here
 }
 ```
 
+### Posts
+
+#### Create a Post
+
+**Endpoint:** `POST /api/posts/`
+
+**Headers:**
+```
+Authorization: Token your-auth-token-here
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+    "title": "My First Post",
+    "content": "This is the content of my first post on the platform!"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "id": 1,
+    "author": "johndoe",
+    "author_id": 1,
+    "title": "My First Post",
+    "content": "This is the content of my first post on the platform!",
+    "created_at": "2025-12-08T12:00:00Z",
+    "updated_at": "2025-12-08T12:00:00Z",
+    "comments": [],
+    "comments_count": 0
+}
+```
+
+#### List Posts with Filtering
+
+**Endpoint:** `GET /api/posts/`
+
+**Query Parameters:**
+- `search` - Search in title and content (e.g., `?search=django`)
+- `author` - Filter by author ID (e.g., `?author=1`)
+- `ordering` - Order results (e.g., `?ordering=-created_at`)
+- `page` - Page number for pagination (e.g., `?page=2`)
+
+**Example:** `GET /api/posts/?search=python&ordering=-created_at`
+
+### Comments
+
+#### Create a Comment
+
+**Endpoint:** `POST /api/comments/`
+
+**Headers:**
+```
+Authorization: Token your-auth-token-here
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+    "post": 1,
+    "content": "Great post! Thanks for sharing."
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "id": 1,
+    "post": 1,
+    "author": "janedoe",
+    "author_id": 2,
+    "content": "Great post! Thanks for sharing.",
+    "created_at": "2025-12-08T12:05:00Z",
+    "updated_at": "2025-12-08T12:05:00Z"
+}
+```
+
+#### Filter Comments by Post
+
+**Endpoint:** `GET /api/comments/?post=1`
+
 ## User Model
 
 The custom `CustomUser` model extends Django's `AbstractUser` and includes the following additional fields:
@@ -189,18 +298,60 @@ social_media_api/
 │   ├── urls.py
 │   ├── asgi.py
 │   └── wsgi.py
-└── accounts/
+├── accounts/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py          # CustomUser model
+│   ├── serializers.py     # User serializers
+│   ├── views.py           # Auth views
+│   ├── urls.py            # URL routing
+│   ├── tests.py
+│   └── migrations/
+└── posts/
     ├── __init__.py
     ├── admin.py
     ├── apps.py
-    ├── models.py          # CustomUser model
-    ├── serializers.py     # API serializers
-    ├── views.py           # API views
-    ├── urls.py            # URL routing
+    ├── models.py          # Post and Comment models
+    ├── serializers.py     # Post and Comment serializers
+    ├── views.py           # ViewSets for CRUD operations
+    ├── urls.py            # Router-based URL routing
     ├── tests.py
     └── migrations/
-        └── 0001_initial.py
 ```
+
+## Pagination
+
+All list endpoints are paginated with a default page size of 10 items per page.
+
+**Response Format:**
+```json
+{
+    "count": 25,
+    "next": "http://localhost:8000/api/posts/?page=2",
+    "previous": null,
+    "results": [...]
+}
+```
+
+## Filtering and Search
+
+### Posts
+- **Search:** `?search=keyword` - Searches in title and content
+- **Filter by author:** `?author=1`
+- **Ordering:** `?ordering=-created_at` (prefix with `-` for descending)
+  - Available fields: `created_at`, `updated_at`, `title`
+
+### Comments
+- **Filter by post:** `?post=1`
+- **Filter by author:** `?author=1`
+- **Ordering:** `?ordering=created_at`
+
+## Permissions
+
+- **Read operations** (GET): Available to all authenticated users
+- **Create operations** (POST): Available to all authenticated users
+- **Update/Delete operations** (PUT, PATCH, DELETE): Only available to the content owner
 
 ## Testing with Postman
 
@@ -218,10 +369,27 @@ social_media_api/
 3. **Access protected endpoints:**
    - Add header: `Authorization: Token <your-token>`
 
+4. **Create a post:**
+   - Method: POST
+   - URL: `http://localhost:8000/api/posts/`
+   - Headers: `Authorization: Token <your-token>`
+   - Body (JSON): Include title, content
+
+5. **Add a comment:**
+   - Method: POST
+   - URL: `http://localhost:8000/api/comments/`
+   - Headers: `Authorization: Token <your-token>`
+   - Body (JSON): Include post (ID), content
+
+6. **Search posts:**
+   - Method: GET
+   - URL: `http://localhost:8000/api/posts/?search=keyword`
+
 ## Technologies Used
 
 - **Django 5.2.7** - Web framework
 - **Django REST Framework** - API toolkit
+- **django-filter** - Filtering support
 - **SQLite** - Database (development)
 - **Token Authentication** - API security
 
