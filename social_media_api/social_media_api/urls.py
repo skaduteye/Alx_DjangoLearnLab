@@ -16,8 +16,32 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
+
+
+def api_root(request):
+    """API root endpoint with available endpoints."""
+    return JsonResponse({
+        'message': 'Welcome to the Social Media API',
+        'version': '1.0.0',
+        'endpoints': {
+            'accounts': '/api/accounts/',
+            'posts': '/api/posts/',
+            'comments': '/api/comments/',
+            'feed': '/api/feed/',
+            'notifications': '/api/notifications/',
+            'admin': '/admin/',
+        },
+        'documentation': {
+            'register': 'POST /api/accounts/register/',
+            'login': 'POST /api/accounts/login/',
+            'profile': 'GET /api/accounts/profile/',
+        }
+    })
+
 
 urlpatterns = [
+    path('', api_root, name='api-root'),
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')),
     path('api/', include('posts.urls')),
