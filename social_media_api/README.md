@@ -98,6 +98,23 @@ This project provides the foundational backend for a social media platform, incl
 | `/api/comments/{id}/` | PATCH | Partial update a comment | Token required |
 | `/api/comments/{id}/` | DELETE | Delete a comment (owner only) | Token required |
 
+### Likes Endpoints
+
+| Endpoint | Method | Description | Authentication |
+|----------|--------|-------------|----------------|
+| `/api/posts/{id}/like/` | POST | Like a post | Token required |
+| `/api/posts/{id}/unlike/` | POST | Unlike a post | Token required |
+
+### Notifications Endpoints
+
+| Endpoint | Method | Description | Authentication |
+|----------|--------|-------------|----------------|
+| `/api/notifications/` | GET | List all notifications | Token required |
+| `/api/notifications/{id}/` | GET | Get a specific notification | Token required |
+| `/api/notifications/{id}/read/` | POST | Mark a notification as read | Token required |
+| `/api/notifications/mark-all-read/` | POST | Mark all notifications as read | Token required |
+| `/api/notifications/unread-count/` | GET | Get unread notification count | Token required |
+
 ### User Registration
 
 **Endpoint:** `POST /api/accounts/register/`

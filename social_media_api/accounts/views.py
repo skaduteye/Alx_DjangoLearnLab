@@ -5,6 +5,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
+from django.contrib.contenttypes.models import ContentType
 
 from .models import CustomUser
 from .serializers import (
@@ -13,6 +14,7 @@ from .serializers import (
     UserLoginSerializer,
     UserProfileSerializer,
 )
+from notifications.models import Notification
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -131,6 +133,15 @@ class FollowUserView(generics.GenericAPIView):
         
         # Add to following (which adds current user to target's followers)
         user_to_follow.followers.add(request.user)
+        
+        # Create notification for the followed user
+        Notification.objects.create(
+            recipient=user_to_follow,
+            actor=request.user,
+            verb='started following you',
+            target_content_type=ContentType.objects.get_for_model(request.user),
+            target_object_id=request.user.id
+        )
         
         return Response({
             'message': f'You are now following {user_to_follow.username}.',

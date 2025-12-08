@@ -10,4 +10,7 @@ urlpatterns = [
     path('', include(router.urls)),
     # User feed - posts from followed users
     path('feed/', views.FeedView.as_view(), name='feed'),
+    # Like/Unlike posts
+    path('posts/<int:pk>/like/', views.LikePostView.as_view(), name='like-post'),
+    path('posts/<int:pk>/unlike/', views.UnlikePostView.as_view(), name='unlike-post'),
 ]
