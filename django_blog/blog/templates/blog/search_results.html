@@ -1,0 +1,66 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Search Results - Django Blog{% endblock %}
+
+{% block content %}
+<div class="search-results-container">
+    <header class="search-results-header">
+        <h1>🔍 Search Results</h1>
+        {% if query %}
+            <p class="search-query">Showing results for: <strong>"{{ query }}"</strong></p>
+            <p class="results-count">Found {{ count }} post{{ count|pluralize }}</p>
+        {% else %}
+            <p class="no-query">Please enter a search term.</p>
+        {% endif %}
+    </header>
+
+    {% if results %}
+        <div class="posts-grid">
+            {% for post in results %}
+                <article class="post-card">
+                    <div class="post-card-header">
+                        <h2><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h2>
+                        <div class="post-meta">
+                            <span class="author">
+                                <i class="author-icon">✍️</i> {{ post.author.username }}
+                            </span>
+                            <span class="date">
+                                <i class="date-icon">📅</i> {{ post.published_date|date:"F d, Y" }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="post-card-content">
+                        <p>{{ post.content|truncatewords:30 }}</p>
+                    </div>
+                    {% if post.tags.all %}
+                        <div class="post-card-tags">
+                            <i class="tag-icon">🏷️</i>
+                            {% for tag in post.tags.all %}
+                                <a href="{% url 'tagged-posts' tag.slug %}" class="tag-badge">{{ tag.name }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="post-card-footer">
+                        <a href="{% url 'post-detail' post.pk %}" class="btn btn-secondary btn-sm">Read More</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% elif query %}
+        <div class="no-results">
+            <p>No posts found matching your search.</p>
+            <p>Try different keywords or <a href="{% url 'post-list' %}">browse all posts</a>.</p>
+        </div>
+    {% endif %}
+
+    <div class="search-tips">
+        <h3>💡 Search Tips</h3>
+        <ul>
+            <li>Try searching by post title, content, or tags</li>
+            <li>Use specific keywords for better results</li>
+            <li>Check your spelling</li>
+            <li>Try broader terms if you get no results</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

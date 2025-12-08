@@ -25,6 +25,10 @@
                         <li><a href="{% url 'register' %}">Register</a></li>
                     {% endif %}
                 </ul>
+                <form action="{% url 'search-posts' %}" method="get" class="search-form">
+                    <input type="text" name="q" placeholder="Search posts..." class="search-input" value="{{ request.GET.q }}">
+                    <button type="submit" class="search-button">🔍</button>
+                </form>
             </div>
         </nav>
     </header>

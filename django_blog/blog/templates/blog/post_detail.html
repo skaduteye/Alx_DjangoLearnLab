@@ -30,6 +30,16 @@
             </div>
         </header>
         
+        <!-- Tags Section -->
+        {% if post.tags.all %}
+            <div class="post-tags">
+                <i class="tag-icon">🏷️</i> <strong>Tags:</strong>
+                {% for tag in post.tags.all %}
+                    <a href="{% url 'tagged-posts' tag.slug %}" class="tag-badge">{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
         <div class="post-detail-content">
             {{ post.content|linebreaks }}
         </div>

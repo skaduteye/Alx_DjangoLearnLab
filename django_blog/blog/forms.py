@@ -52,7 +52,7 @@ class PostForm(forms.ModelForm):
     
     class Meta:
         model = Post
-        fields = ['title', 'content']
+        fields = ['title', 'content', 'tags']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -64,14 +64,20 @@ class PostForm(forms.ModelForm):
                 'placeholder': 'Write your post content here...',
                 'rows': 10
             }),
+            'tags': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter tags separated by commas (e.g., python, django, web)',
+            }),
         }
         labels = {
             'title': 'Post Title',
             'content': 'Post Content',
+            'tags': 'Tags',
         }
         help_texts = {
             'title': 'Give your post a catchy title (max 200 characters)',
             'content': 'Write the main content of your blog post',
+            'tags': 'Add tags to categorize your post (comma-separated)',
         }
     
     def clean_title(self):

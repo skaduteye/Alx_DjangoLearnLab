@@ -8,6 +8,8 @@ This Django blog project provides a complete blogging platform with the followin
 - **User Authentication System**: Registration, login, logout, and profile management
 - **Blog Post Management**: Full CRUD operations for blog posts
 - **Comment System**: Interactive commenting on blog posts
+- **Tagging System**: Organize posts with tags using django-taggit
+- **Search Functionality**: Multi-field search across titles, content, and tags
 - **Class-Based Views**: Efficient Django CBV implementation
 - **Permission Controls**: Author-only edit/delete functionality
 - **Responsive Design**: Modern CSS with grid layouts
@@ -18,6 +20,7 @@ This Django blog project provides a complete blogging platform with the followin
 
 ## Documentation
 
+- **[Tagging and Search Documentation](TAGGING_AND_SEARCH.md)** - Complete guide to tagging and search features
 - **[Comment Functionality Documentation](COMMENT_FUNCTIONALITY.md)** - Complete guide to the comment system
 - **[Blog Post Management Documentation](BLOG_POST_MANAGEMENT.md)** - Complete guide to post CRUD operations
 - **[Authentication System Documentation](AUTHENTICATION_DOCUMENTATION.md)** - Comprehensive guide to the user authentication system
@@ -239,6 +242,38 @@ Templates are stored in `blog/templates/blog/` directory. Django automatically d
 4. Click "Yes, Delete Comment" to permanently remove it
 5. You'll be redirected back to the post
 
+### Using Tags and Search
+
+#### Adding Tags to Posts
+1. **When creating or editing a post**:
+   - Find the "Tags" field in the post form
+   - Enter tags separated by commas (e.g., `python, django, web development`)
+   - Tags are automatically created if they don't exist
+2. **Click "Publish Post" or "Update Post"**
+3. Tags will appear on the post card and detail page
+
+#### Browsing Posts by Tag
+1. **From any post**, click on a tag badge
+2. You'll see all posts with that tag
+3. Tag name is displayed prominently at the top
+4. Posts are paginated if there are many
+
+#### Searching for Posts
+1. **Use the search bar** in the navigation (top-right)
+2. Enter keywords to search for:
+   - Post titles
+   - Post content
+   - Tag names
+3. Press Enter or click the search icon (🔍)
+4. View results with match count
+5. Refine your search if needed
+
+#### Search Tips
+- Use specific keywords for better results
+- Search works across multiple fields
+- Try broader terms if no results found
+- Check spelling for accurate results
+
 ### Managing Blog Posts (Admin Panel)
 
 1. Access the admin panel at http://127.0.0.1:8000/admin/
@@ -253,6 +288,13 @@ Templates are stored in `blog/templates/blog/` directory. Django automatically d
 3. Click on "Comments" under the BLOG section
 4. View, edit, or delete comments
 5. Filter by date, author, or search by content
+
+### Managing Tags (Admin Panel)
+
+1. Access the admin panel at http://127.0.0.1:8000/admin/
+2. Under "TAGGIT" section, click "Tags"
+3. View all tags and their usage
+4. Edit tag names or delete unused tags
 
 ## Features
 
@@ -278,6 +320,26 @@ Templates are stored in `blog/templates/blog/` directory. Django automatically d
   - Minimum 3 character validation
   - Permission controls for comment management
 
+- ✅ **Tagging System**:
+  - Add tags to posts (comma-separated)
+  - Tag display on post cards and detail pages
+  - Click tags to filter posts by tag
+  - SEO-friendly tag URLs (slug-based)
+  - Automatic tag creation
+  - Many-to-many relationship (posts ↔ tags)
+  - django-taggit integration
+  - Tag management in admin panel
+
+- ✅ **Search Functionality**:
+  - Multi-field search (title, content, tags)
+  - Search bar in navigation
+  - Django Q objects for complex queries
+  - Search results page with count
+  - Case-insensitive search
+  - Distinct results (no duplicates)
+  - Search tips for users
+  - Empty query handling
+
 - ✅ **User Authentication System**:
   - User registration with email
   - Login/logout functionality
@@ -289,9 +351,11 @@ Templates are stored in `blog/templates/blog/` directory. Django automatically d
 - ✅ **Technical Features**:
   - Class-based views (ListView, DetailView, CreateView, UpdateView, DeleteView)
   - Permission controls (LoginRequiredMixin, UserPassesTestMixin)
-  - Post model with title, content, publication date, and author
+  - Post model with title, content, publication date, author, and tags
   - Comment model with content, timestamps, and relationships
-  - Admin interface for managing posts and comments
+  - django-taggit for tagging functionality
+  - Django Q objects for search queries
+  - Admin interface for managing posts, comments, and tags
   - Responsive design with modern CSS
   - Message framework integration
   - Static file management
@@ -299,8 +363,8 @@ Templates are stored in `blog/templates/blog/` directory. Django automatically d
 
 ### Planned Features
 - Nested comment replies (threading)
-- Post categories and tags
-- Search functionality
+- Post categories
+- Advanced search filters (date, author)
 - Rich text editor for posts and comments
 - Email verification
 - Password reset functionality

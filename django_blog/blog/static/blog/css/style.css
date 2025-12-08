@@ -1113,3 +1113,277 @@ footer {
         font-size: 1.5rem;
     }
 }
+
+/* ===================================
+   SEARCH AND TAG STYLES
+   =================================== */
+
+/* Search Form in Navigation */
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.search-input {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    width: 250px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    width: 300px;
+}
+
+.search-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: #2980b9;
+}
+
+/* Tag Badges */
+.tag-badge {
+    display: inline-block;
+    background-color: #e8f4f8;
+    color: #3498db;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0.2rem;
+    transition: all 0.3s ease;
+    border: 1px solid #3498db;
+}
+
+.tag-badge:hover {
+    background-color: #3498db;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.tag-badge.active {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+}
+
+/* Post Tags in Detail View */
+.post-tags {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.post-tags .tag-icon {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+}
+
+/* Post Card Tags */
+.post-card-tags {
+    padding: 0.75rem 1rem;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.post-card-tags .tag-icon {
+    margin-right: 0.5rem;
+}
+
+/* Search Results Page */
+.search-results-container {
+    padding: 2rem 0;
+}
+
+.search-results-header {
+    margin-bottom: 2rem;
+    text-align: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid #3498db;
+}
+
+.search-results-header h1 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.search-query {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.results-count {
+    color: #666;
+    font-size: 1rem;
+}
+
+.no-query {
+    color: #e74c3c;
+    font-size: 1.1rem;
+    font-style: italic;
+}
+
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+
+.no-results p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.search-tips {
+    margin-top: 3rem;
+    padding: 1.5rem;
+    background-color: #e8f4f8;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+}
+
+.search-tips h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.search-tips ul {
+    list-style-position: inside;
+    color: #555;
+}
+
+.search-tips li {
+    margin-bottom: 0.5rem;
+}
+
+/* Tagged Posts Page */
+.tagged-posts-container {
+    padding: 2rem 0;
+}
+
+.tagged-posts-header {
+    margin-bottom: 2rem;
+    text-align: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid #3498db;
+}
+
+.tagged-posts-header h1 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.tag-highlight {
+    color: #3498db;
+    background-color: #e8f4f8;
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+}
+
+.posts-count {
+    color: #666;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+.no-posts {
+    text-align: center;
+    padding: 3rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+
+.no-posts p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.tag-navigation {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+/* Navbar adjustments for search */
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* Responsive adjustments for search and tags */
+@media (max-width: 768px) {
+    .search-form {
+        width: 100%;
+        margin-top: 1rem;
+    }
+    
+    .search-input {
+        width: 100%;
+        flex: 1;
+    }
+    
+    .search-input:focus {
+        width: 100%;
+    }
+    
+    .navbar .container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .nav-links {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .post-tags {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .search-results-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .tagged-posts-header h1 {
+        font-size: 1.8rem;
+    }
+}

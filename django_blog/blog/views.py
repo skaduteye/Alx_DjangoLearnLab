@@ -5,8 +5,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.db.models import Q
 from .models import Post, Comment
-from .forms import CustomUserCreationForm, UserUpdateForm, CommentForm
+from .forms import CustomUserCreationForm, UserUpdateForm, CommentForm, PostForm
 
 # Create your views here.
 
@@ -47,7 +48,7 @@ class PostDetailView(DetailView):
 class PostCreateView(LoginRequiredMixin, CreateView):
     """Allow authenticated users to create new blog posts."""
     model = Post
-    fields = ['title', 'content']
+    form_class = PostForm
     template_name = 'blog/post_form.html'
     
     def form_valid(self, form):
@@ -64,7 +65,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """Allow post authors to edit their own posts."""
     model = Post
-    fields = ['title', 'content']
+    form_class = PostForm
     template_name = 'blog/post_form.html'
     
     def form_valid(self, form):
@@ -200,3 +201,45 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         """Redirect back to the post detail page."""
         comment = self.get_object()
         return reverse_lazy('post-detail', kwargs={'pk': comment.post.pk})
+
+
+# Search and Tag views
+
+def search_posts(request):
+    """Search for posts by title, content, or tags."""
+    query = request.GET.get('q', '')
+    results = Post.objects.none()
+    
+    if query:
+        # Use Q objects to search across multiple fields
+        results = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+    
+    context = {
+        'query': query,
+        'results': results,
+        'count': results.count()
+    }
+    return render(request, 'blog/search_results.html', context)
+
+
+class TaggedPostListView(ListView):
+    """Display all posts with a specific tag."""
+    model = Post
+    template_name = 'blog/tagged_posts.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+    
+    def get_queryset(self):
+        """Filter posts by the tag name from the URL."""
+        tag_name = self.kwargs.get('tag_name')
+        return Post.objects.filter(tags__name__in=[tag_name])
+    
+    def get_context_data(self, **kwargs):
+        """Add the tag name to the context."""
+        context = super().get_context_data(**kwargs)
+        context['tag_name'] = self.kwargs.get('tag_name')
+        return context
